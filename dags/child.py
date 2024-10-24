@@ -22,11 +22,13 @@ with DAG(
         external_dag_id='parent_success',  # Ensure parent DAG ID matches exactly
         external_task_id='end',  # Ensure parent task ID matches
         mode='poke',
-        timeout=60,  # 1 minute timeout
+        timeout=600,  # 1 minute timeout
         poke_interval=30,  # Check every 30 seconds
         soft_fail=False,  # Set to False to ensure it triggers only on success
     )
 
-    child_task = DummyOperator(task_id='child_task')
+    start = DummyOperator(task_id='start')
 
-    wait_for_parent_success >> child_task
+    end = DummyOperator(task_id='end')
+
+    start >> end
