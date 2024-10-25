@@ -21,7 +21,7 @@ def check_minute():
 
 
 with DAG(
-    dag_id='parent_success',
+    dag_id='parent_TriggerDagRunOperator',
     default_args=default_args,
     description='Parent DAG that triggers child DAG on success',
     schedule_interval='* * * * *',  # Every minute
@@ -30,6 +30,8 @@ with DAG(
 ) as dag:
     start = DummyOperator(task_id='start')
 
+    # Pass if the current minute is even (fail every other run)
+    # This is to demonstrate the TriggerDagRunOperator only triggers on success; change this to your predecessor task(s)
     check_minute_task = PythonOperator(
         task_id='check_minute',
         python_callable=check_minute,
@@ -39,7 +41,9 @@ with DAG(
 
     trigger_child = TriggerDagRunOperator(
         task_id='trigger_child',
-        trigger_dag_id='child',  # Ensure this matches the child DAG ID
+        # Ensure this matches the child (dependency) DAG ID
+        trigger_dag_id='child_TriggerDagRunOperator',
+        # Set to True if the parent task needs to wait to pass for the child DAG to complete
         wait_for_completion=False,
     )
 
