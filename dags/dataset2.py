@@ -14,7 +14,7 @@ DB_PORT = '5432'
 
 # Dataset definition (must match the name used in dataset1.py)
 DATASET_NAME = "my_dataset"
-dataset = Dataset(f"dataset.json")  # Optional, for local reference
+dataset = Dataset("my_dataset")  # Define the dataset
 
 
 def generate_random_string():
@@ -64,6 +64,7 @@ with DAG(
         python_callable=update_dataset,
         op_kwargs={
             "random_string": "{{ task_instance.xcom_pull(task_ids='generate_random_string') }}"},
+        outlets=[dataset]  # Emit dataset update event
     )
 
     generate_string_task >> update_dataset_task  # Set task dependencies

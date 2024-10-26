@@ -45,7 +45,7 @@ def print_latest_string():
 with DAG(
     dag_id="dataset3",
     start_date=datetime(2023, 10, 26),
-    schedule=[Dataset("my_dataset")],
+    schedule=[Dataset("my_dataset")],  # Listen for updates to the dataset
     catchup=False,
 ) as dag:
 
