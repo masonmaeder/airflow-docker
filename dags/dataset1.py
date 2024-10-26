@@ -5,7 +5,7 @@ import psycopg2  # type: ignore
 import json
 import os
 
-# Database connection parameters
+# Database connection parameters (change to actual credentials)
 DB_NAME = 'airflow'
 DB_USER = 'airflow'
 DB_PASSWORD = 'airflow'
@@ -14,8 +14,7 @@ DB_PORT = '5432'
 
 # Dataset definition
 DATASET_NAME = "my_dataset"
-DATASET_PATH = "dataset.json"  # Optional for local storage reference
-dataset = Dataset(DATASET_PATH)
+dataset = Dataset(DATASET_NAME)
 
 
 def create_dataset_if_not_exists():

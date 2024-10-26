@@ -11,9 +11,9 @@ DB_PASSWORD = 'airflow'
 DB_HOST = 'airflow-docker-postgres-1'
 DB_PORT = '5432'
 
-# Dataset definition (must match the name used in dataset1.py)
+# Dataset definition
 DATASET_NAME = "my_dataset"
-# dataset = Dataset(f"dataset.json")  # Optional, for local reference
+dataset = Dataset(DATASET_NAME)
 
 
 def print_latest_string():
@@ -45,7 +45,7 @@ def print_latest_string():
 with DAG(
     dag_id="dataset3",
     start_date=datetime(2023, 10, 26),
-    schedule=[Dataset("my_dataset")],  # Listen for updates to the dataset
+    schedule=[dataset],  # Listen for updates to the dataset
     catchup=False,
 ) as dag:
 

@@ -9,8 +9,9 @@ with DAG(
     catchup=False,
 ) as dag:
 
+    # test connection with example query
     query_task = PostgresOperator(
         task_id='query_postgres',
-        postgres_conn_id='my_postgres',  # Connection ID created earlier
-        sql='SELECT * FROM dag;',  # SQL query to execute
+        postgres_conn_id='my_postgres',
+        sql='SELECT * FROM my_dataset;',
     )

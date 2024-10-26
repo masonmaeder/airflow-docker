@@ -5,21 +5,21 @@ import psycopg2  # type: ignore
 import random
 import string
 
-# Database connection parameters
+# Database connection parameters (change to actual credentials)
 DB_NAME = 'airflow'
 DB_USER = 'airflow'
 DB_PASSWORD = 'airflow'
 DB_HOST = 'airflow-docker-postgres-1'
 DB_PORT = '5432'
 
-# Dataset definition (must match the name used in dataset1.py)
+# Dataset definition
 DATASET_NAME = "my_dataset"
-dataset = Dataset("my_dataset")  # Define the dataset
+dataset = Dataset(DATASET_NAME)
 
 
 def generate_random_string():
     """Generates a random string of fixed length."""
-    length = 10  # Length of the random string
+    length = 10
     random_string = ''.join(random.choices(
         string.ascii_letters + string.digits, k=length))
     return random_string
@@ -37,7 +37,6 @@ def update_dataset(random_string):
     )
     cursor = conn.cursor()
 
-    # Insert the random string into the dataset table
     cursor.execute(
         f"INSERT INTO {DATASET_NAME} (data) VALUES (%s);", (random_string,))
     conn.commit()
@@ -49,14 +48,14 @@ def update_dataset(random_string):
 with DAG(
     dag_id="dataset2",
     start_date=datetime(2023, 10, 26),
-    schedule_interval="@once",  # Run once when triggered
+    schedule_interval="@once",
     catchup=False,
 ) as dag:
 
     generate_string_task = PythonOperator(
         task_id="generate_random_string",
         python_callable=generate_random_string,
-        do_xcom_push=True  # Enable XCom to pass the random string to the next task
+        do_xcom_push=True
     )
 
     update_dataset_task = PythonOperator(
@@ -64,7 +63,8 @@ with DAG(
         python_callable=update_dataset,
         op_kwargs={
             "random_string": "{{ task_instance.xcom_pull(task_ids='generate_random_string') }}"},
-        outlets=[dataset]  # Emit dataset update event
+        # IMPORTANT: Use this to update the dataset and trigger downstream tasks
+        outlets=[dataset]
     )
 
-    generate_string_task >> update_dataset_task  # Set task dependencies
+    generate_string_task >> update_dataset_task
